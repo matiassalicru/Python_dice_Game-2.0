@@ -11,28 +11,6 @@ import random
 # Si los dados son todos distintos -> 0 puntos
 
 # CREAR MENU DE OPCIONES PARA VER SI LA PERSONA QUIERE SEGUIR JUGANDO
-
-
-"""
-
-Se debe mostrar por cada turno el valor de los dados y el puntaje parcial del jugador.
-
-Al terminar el turno de ambos jugadores, se verifica si alguno de ellos alcanzó el puntaje objetivo. Si no es así,
- vuelven a jugar ambos (cada uno debe completar su turno) hasta finalizar el juego.
-
-Al terminar el juego, se debe mostrar el nombre y puntaje total obtenido de cada jugador e informar el nombre del
- ganador. Si ambos jugadores llegaran a tener el mismo puntaje final, gana aquel jugador que tenga la mayor cantidad 
- de jugadas ganadas. Si coinciden también en cantidad de jugadas, entonces es un empate.
-
-Por último, se pide elaborar y mostrar las siguientes estadísticas:
-
-La cantidad de jugadas realizadas (recordando que una jugada consiste en los turnos de ambos jugadores).
-Si hubo al menos una jugada con puntaje empatado entre ambos jugadores.        
-El puntaje promedio obtenido por jugada por cada jugador.
-El porcentaje de aciertos para cada jugador (considerando acierto si la suma de los dados coincidió con la paridad 
-apostada). Indicar también si el ganador es el que tuvo mayor porcentaje de aciertos.
-Si algún jugador ganó en al menos 3 turnos seguidos."""
-
 print('/' * 79)
 print('Bienvenidos al juego de dados')
 print('/' * 79)
@@ -55,20 +33,21 @@ def porcentaje_aciertos(aciertos, total):
 nombre_1 = input('> Ingrese el nombre de el jugador 1: ')
 nombre_2 = input('> Ingrese el nombre de el jugador 2: ')
 
-puntaje_1 = 0
-puntaje_2 = 0
+puntaje_1, puntaje_2 = 0, 0  # Puntajes iniciales para jugadores 1 y 2
 
 jugadas = 0  # Cantidad de veces que se tiran los dados (incluye ambos jugadores)
 empates = 0  # Cantidad de enpates que se obtubieron en cada jugada
-cont_puntaje_1 = 0  # Contador de puntos para el promedio jugador 1
-cont_puntaje_2 = 0  # Contador de puntos para el promedio jugador 2
-acierto1 = 0  # Cantidad de aciertos del jugador 1
-acierto2 = 0  # Cantidad de aciertos del jugador 2
-porcentaje_aciertos1 = 0  # Porcentaje de aciertos del jugador 1
-porcentaje_aciertos2 = 0  # Porcentaje de aciertos del jugador 2
+cont_puntaje_1, cont_puntaje_2 = 0, 0  # Contador de puntos para el promedio jugador 1/2
+acierto1, acierto2 = 0, 0  # Cantidad de aciertos del jugador 1/2
+porcentaje_aciertos1, porcentaje_aciertos2 = 0, 0  # Porcentaje de aciertos del jugador 1/2
+
+ganadas_1 = 0
+ganadas_2 = 0
+hasWon3Times = False
+
 
 puntuacion_objetivo = 0
-while puntuacion_objetivo < 5:
+while puntuacion_objetivo < 10:
     puntuacion_objetivo = int(input('> Ingrese la puntuación objetivo (debe ser mayor a 10): '))
 
 # ------------------- PRESENTACIÓN -------------------------
@@ -227,15 +206,27 @@ while not isMayor:
 
     cont_puntaje_2 += puntaje_2
 
+    # Comprueba el ganador de la ronda actual.
+    if puntaje_1 != puntaje_2:
+        if puntaje_1 > puntaje_2:
+            ganadas_2 = 0
+            ganadas_1 += 1
+        else:
+            ganadas_1 = 0
+            ganadas_2 += 1
+        if ganadas_1 >= 3 or ganadas_2 >= 3:
+            hasWon3Times = True
+
     jugadas += 1
     print(f'----------------TERMINO LA JUGADA {jugadas}-----------------')
 
     empates = hubo_empates(puntaje_1, puntaje_2)
 
-promedio_1 = cont_puntaje_1 / jugadas
-promedio_2 = cont_puntaje_2 / jugadas
-porcentaje_aciertos1 = porcentaje_aciertos(acierto1, jugadas)
-porcentaje_aciertos2 = porcentaje_aciertos(acierto2, jugadas)
+
+promedio_1 = round(cont_puntaje_1 / jugadas, 2)
+promedio_2 = round(cont_puntaje_2 / jugadas, 2)
+porcentaje_aciertos1 = round((porcentaje_aciertos(acierto1, jugadas)), 2)
+porcentaje_aciertos2 = round((porcentaje_aciertos(acierto2, jugadas)), 2)
 
 print('-' * 79)
 if puntaje_1 > puntaje_2:
@@ -258,17 +249,16 @@ else:
     print("\t No hubo empates.")
 print(f'\t El promedio de los puntajes del jugador {nombre_1} es {promedio_1}.')
 print(f'\t El promedio de los puntajes del jugador {nombre_2} es {promedio_2}.')
-print("\t El porcentaje de aciertos de ", nombre_1, "es: ", porcentaje_aciertos(acierto1, jugadas), "%.")
 
-print("\t El porcentaje de aciertos de ", nombre_2, "es: ", porcentaje_aciertos(acierto2, jugadas), "%.")
+print("\t El porcentaje de aciertos de ", nombre_1, "es: ", porcentaje_aciertos1, "%.")
+print("\t El porcentaje de aciertos de ", nombre_2, "es: ", porcentaje_aciertos2, "%.")
+
+if hasWon3Times:
+    print('\t Uno de los jugadores ganó al menos 3 rondas seguidas')
+else:
+    print('\t NO hubo jugadores que ganaran al menos 3 rondas seguidas')
+
+print('/' * 79)
 print('Fin del juego')
 print('/' * 79)
 
-"""
- --La cantidad de jugadas realizadas (recordando que una jugada consiste en los turnos de ambos jugadores). ok
-    ----Si hubo al menos una jugada con puntaje empatado entre ambos jugadores. ok     
-    ----El puntaje promedio obtenido por jugada por cada jugador. ok
-    ----El porcentaje de aciertos para cada jugador (considerando acierto si la suma de los dados coincidió con la paridad 
-    apostada). Indicar también si el ganador es el que tuvo mayor porcentaje de aciertos.
-    Si algún jugador ganó en al menos 3 turnos seguidos.
-"""
